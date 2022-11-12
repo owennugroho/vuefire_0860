@@ -97,8 +97,6 @@
 
 <script>
 //tambahkan code untuk import database reference dan fungsi bawaan dari firebase database
-import { db } from "../firebase";
-import { ref,set,remove,get,push,onValue } from '@firebase/database';
 
 export default {
     name: "MerchandisePage",
@@ -156,7 +154,7 @@ export default {
         editData(item){
             this.dialog = true; 
             this.formType = -1; 
-            this.form = item;
+            this.form = Object.assign({}, item);
             this.selectedId = item.id;
         },
 
@@ -168,13 +166,7 @@ export default {
         closeDialog() {
             this.dialog = false;
             this.formType = 0;
-            this.form = {
-                merchandise: ' ',
-                artist: ' ',
-                price: ' ',
-                stock: ' ',
-                package: ' '
-            }
+            this.$refs.form.reset();
         }
     },
 
