@@ -6,6 +6,8 @@ const firebaseConfig = {
 }
 
 //tambahkan code untuk menginisialisasikan Firebase
+const firebaseApp = initializeApp(firebaseConfig);
 
 //tambahkan code untuk menginisialisasikan Realtime Database 
 //dan mendapatkan referensi ke database tersebut
+export const db = getDatabase(firebaseApp);

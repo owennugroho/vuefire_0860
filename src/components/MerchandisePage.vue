@@ -97,6 +97,8 @@
 
 <script>
 //tambahkan code untuk import database reference dan fungsi bawaan dari firebase database
+import { db } from "../firebase";
+import { ref,set,remove,get,push,onValue } from "@firebase/database";
 
 export default {
     name: "MerchandisePage",
@@ -142,13 +144,49 @@ export default {
 
     created() {
         // tambahkan fungsi untuk retrieve data
-
+        onValue(ref(db, 'merchandises'), (snapshot) => {
+            this.merchandises = [],
+            snapshot.forEach((merchandise) => {
+                this.merchandises.push({
+                    id: merchandise.key,
+                    merchandise: merchandise.val().merchandise,
+                    artist: merchandise.val().artist,
+                    price: merchandise.val().price,
+                    stock: merchandise.val().stock,
+                    package: merchandise.val().package
+                });
+            })
+        })
     },
 
     methods: {
         saveData() {
             //tambahkan fungsi untuk create dan update data
-            
+            if(this.formType == -1) {
+                set(ref(db, "merchandises/" + this.selectedId), this.form)
+                .then(()=>{
+                    this.snackbar = true;
+                    this.error_message = "Update Data Success!";
+                    this.color = "green";
+                    this.closeDialog();
+                }).catch((err) => {
+                    this.error_message = "Update Data Failed:!" + err;
+                    this.color = "red";
+                    this.closeDialog();
+                })
+            }else{
+                push(ref(db, "merchandises"), this.form)
+                .then(() => {
+                    this.snackbar = true;
+                    this.error_message = "Add Data Success!";
+                    this.color = "green";
+                    this.closeDialog();
+                }).catch((err) => {
+                    this.error_message = "Add Data Failed:!" + err;
+                    this.color = "red";
+                    this.closeDialog();
+                })
+            }
         },
 
         editData(item){
@@ -160,7 +198,18 @@ export default {
 
         deleteData() {
             //tambahkan fungsi untuk delete data
-            
+            remove(ref(db, "merchandises/" + this.selectedId))
+            .then(() => {
+                this.dialogConfirm = false;
+                this.snackbar = true;
+                this.error_message = "Delete Data Success!";
+                this.color = "green";
+            }).catch((err) =>{
+                this.dialogConfirm = false;
+                this.snackbar = true;
+                this.error_message = "Add Data Failed!";
+                this.color = "red";
+            })
         },
 
         closeDialog() {
